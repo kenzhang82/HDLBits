@@ -5,7 +5,9 @@ module module_shift8 (
   output [7:0] q 
 );
 
-  wire q1, q2, q3;
+  wire [7:0] q1;
+  wire [7:0] q2;
+  wire [7:0] q3;
 
   my_dff8 dff_inst1
   (
