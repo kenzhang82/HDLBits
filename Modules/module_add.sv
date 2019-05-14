@@ -27,6 +27,6 @@ module module_add
     .cout()
   );
 
-  assign sum = cout1 ? {sum2, sum1} : (sum1 + sum2);
+  assign sum = sum2 ? {sum2, sum1} : {16'b0, sum1};
 
 endmodule
