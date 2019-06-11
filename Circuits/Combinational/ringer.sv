@@ -2,12 +2,11 @@ module ringer
 (
 	input ring,
 	input vibrate_mode,
-	output ringer,    // Make sound
-	output motor      // Vibrate
+	output reg ringer,    // Make sound
+	output reg motor      // Vibrate
 );
 
-	assign ringer = (~vibrate_mode) & ring;
-	assign motor = vibrate_mode | (~ring);
-
+  assign ringer = ring & (~vibrate_mode);
+  assign motor = ring & vibrate_mode;
 
 endmodule
