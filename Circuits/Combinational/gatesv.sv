@@ -13,7 +13,7 @@ module gatesv
 		out_different = 0;
 		for(i = 1; i <= 3; i = i + 1) begin
 			if (in[i] && in[i-1]) begin
-				out_both[i] = 1;
+				out_both[i-1] = 1;
 			end
 		end
 		for(i = 3; i >= 1; i = i - 1) begin
@@ -21,14 +21,16 @@ module gatesv
 				out_any[i] = 1;
 			end
 		end
-		for(i = 0; i < 5; i = i + 1) begin
-			if (i == 4) begin
-				if (in[i-1] ^ in[0]) begin
+		for(i = 0; i < 4; i = i + 1) begin
+			if (i == 3) begin
+				if (in[3] ^ in[0]) begin
 					out_different[3] = 1;
 				end
 			end
 			else begin
-				if (in[i] ^ in[i+1])
+				if (in[i] ^ in[i+1]) begin
+          out_different[i] = 1;
+        end
 			end
 		end
 	end
