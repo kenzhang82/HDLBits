@@ -10,7 +10,7 @@ module adders
   (
     .a(x[0]),
     .b(y[0]),
-    .cin(),
+    .cin(1'b0),
     .cout(inter_cout[0]),
     .sum(sum[0])
   );
@@ -18,18 +18,18 @@ module adders
   genvar i;
   generate
     for (i = 1; i <= 3; i = i + 1) begin: gen_adders
-      fadd fadd0_inst
+      fadd fadds_inst
       (
-        .a(a[i]),
-        .b(b[i]),
-        .cin(),
-        .cout(),
+        .a(x[i]),
+        .b(y[i]),
+        .cin(inter_cout[i-1]),
+        .cout(inter_cout[i]),
         .sum(sum[i])
       );      
     end
   endgenerate
 
-  assign cout = inter_cout;
+  assign sum[4] = inter_cout[3];
 
 endmodule
 
