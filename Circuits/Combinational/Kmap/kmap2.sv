@@ -7,8 +7,6 @@ module kmap2
   output out
 );
 
-y = B'C' + A'D' + BCD + AB'D
-
-  assign out = ((~b)&(~c)) | ((~a) | (~d)) | (b & c & d) | (a & (~b) & d);
+  assign out = ((~b)&(~c)) | ((~a) & (~d)) | (b & c & d) | (a & (~b) & d);
 
 endmodule
