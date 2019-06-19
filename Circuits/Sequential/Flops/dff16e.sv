@@ -7,14 +7,16 @@ module dff16e
 	output [15:0] q
 );
 
-	reg [15:0] stored_input;
-
 	always @ (posedge clk) begin
 		if (~resetn) begin
 			q <= 16'b0;
 		end
 		else begin
-			// FIXME
+      case (byteena)
+        2'b01: q[7:0] <= d[7:0];
+        2'b10: q[15:8] <= d[15:8];
+        2'b11: q <= d;
+      endcase
 		end
 	end
 
