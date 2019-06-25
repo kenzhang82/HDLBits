@@ -9,6 +9,7 @@ module counter1to12
 	output [3:0] c_d
 );
 
+  
 	count4 count4_inst
 	(
 		.clk(clk),
@@ -18,23 +19,8 @@ module counter1to12
 		.Q(Q)
 	);
 
-	always @(posedge clk) begin
-		if (reset) begin
-			c_load <= 1;
-			c_enable <= 0;
-			c_d <= 1;
-		end
-		else begin
-			c_load <= 0;
-			if (enable) begin
-				c_enable <= 1;
-				if (Q == 12) begin
-
-				end
-			end
-		end
-	end
+  assign c_enable = enable;
+  assign c_load = reset || (Q == 4'd12);
+  assign c_d = 1;
 
 endmodule
-
-// count4 the_counter (clk, c_enable, c_load, c_d /*, ... */ );
