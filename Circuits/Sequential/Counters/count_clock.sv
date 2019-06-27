@@ -9,71 +9,64 @@ module count_clock
   output [7:0] ss 
 );
 
-  count_60 count_seconds
-  (
-
-  );
-
-  count_60 count_minutes
-  (
-  );
-
-  count_12 count_hours
-  (
-  );
-
-  always @(posedge clk) begin
-
-  end
-
-endmodule
-
-module count_60
-(
-  input clk,
-  input reset,
-  input enable,
-  output [5:0] q
-);
-  
+  // Seconds
   always @(posedge clk) begin
     if (reset) begin
-      q <= 0;
+      ss[3:0] <= 0;
+      ss[7:4] <= 0;
     end
     else begin
-      if (enable) begin
-        if (q < 6'd59) begin
-          q <= q + 1;
+      if (ss[3:0] < 4'd9) begin
+        ss[3:0] <= ss[3:0] + 1'b1;
+      end
+      else begin
+        ss[3:0] <= 0;
+        if (ss[7:4] < 4'd5) begin
+          ss[7:4] <= ss[7:4] + 1'b1;
         end
         else begin
-          q <= 0;
+          ss[7:4] <= 0;
         end
       end
     end
   end
 
-endmodule
-
-module count_12
-(
-  input clk,
-  input reset,
-  input enable,
-  output [3:0] q
-);
-  
+  // Minutes
   always @(posedge clk) begin
     if (reset) begin
-      q <= 0;
+      mm[3:0] <= 0;
+      mm[7:4] <= 0;
     end
     else begin
-      if (enable) begin
-        if (q < 4'd11) begin
-          q <= q + 1;
+      if (ena && (ss[7:4]==4'd5) && (ss[3:0]==4'd9)) begin
+        if (mm[3:0] < 4'd9) begin
+          mm[3:0] <= mm[3:0] + 1'b1;
         end
         else begin
-          q <= 0;
+          mm[3:0] <= 0;
+          if (mm[7:4] < 4'd5) begin
+            mm[7:4] <= mm[7:4] + 1'b1;
+          end
+          else begin
+            mm[7:4] <= 0;
+          end
         end
+      end
+    end
+  end
+
+  // Hours
+  always @(posedge clk) begin
+    if (reset) begin
+      hh[3:0] <= 2;
+      hh[7:4] <= 1;
+      pm <= 0;
+    end
+    else begin
+      if (ena && (ss[7:4]==4'd5) && (ss[3:0]==4'd9) && 
+                 (mm[7:4]==4'd5) && (mm[3:0]==4'd9)) begin
+        hh[3:0] <= 1;
+        hh[7:4] <= 0;
       end
     end
   end
