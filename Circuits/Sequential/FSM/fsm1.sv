@@ -8,37 +8,32 @@ module fsm1
 
 	parameter A = 1'b0, B = 1'b1;
 
-	reg state;
-	// State transition, sequential logic
+	reg curr_state, next_state;
+
+	// Synchronous state transition, sequential logic
 	always @(posedge clk or posedge areset) begin
 		if (areset) begin
-			state <= B;
-			out <= 1;
+			curr_state <= B;
 		end
 		else begin
-			case (state)
-				A: begin
-					if (in) begin
-						state <= A;
-						out <= 0;
-					end
-					else begin
-						state <= B;
-						out <= 1;
-					end
-				end
-				B: begin
-					if (in) begin
-						state <= B;
-						out <= 1;
-					end
-					else begin
-						state <= A;
-						out <= 0;
-					end
-				end
-			endcase
+			curr_state <= next_state;
 		end
+	end
+
+	// Next state transition, combinational logic
+	always @(*) begin
+		case (curr_state)
+			A: next_state = in ? A : B;
+			B: next_state = in ? B : A;
+		endcase
+	end
+
+	// Output, combinational logic
+	always @(*) begin
+		case (curr_state)
+			A:  out = 0;
+			B: 	out = 1;
+		endcase
 	end
 
 endmodule
