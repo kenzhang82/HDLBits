@@ -9,46 +9,32 @@ module fsm2
 
 	parameter OFF=0, ON=1;
 
-	reg state;
+	reg curr_state, next_state;
 
-	// State transition, sequential logic
+	// Synchronous state transition, sequential logic
 	always @(posedge clk or posedge areset) begin
 		if (areset) begin
-			state <= OFF;
+			curr_state <= OFF;
 		end
 		else begin
-			case (state)
-				OFF: begin
-					if (j) begin
-						state <= ON;
-					end
-					else begin
-						state <= OFF;
-					end
-				end
-				ON: begin
-					if (k) begin
-						state <= OFF;
-					end
-					else begin
-						state <= ON;
-					end
-				end
-			endcase
+			curr_state <= next_state;
 		end
 	end
 
-	// Outputs, combinational logic
+	// Next state transition, combinational logic
 	always @(*) begin
-		if (areset) begin
-			out = 0;
-		end
-		else begin
-			case (state)
-				OFF: out = 0;
-				ON : out = 1;
-			endcase
-		end
+		case (curr_state)
+			OFF: next_state = j ? ON : OFF;
+			ON : next_state = k ? OFF : ON;
+		endcase
+	end
+
+	// Output, combinational logic
+	always @(*) begin
+		case (curr_state)
+			OFF: out = 0;
+			ON : out = 1;
+		endcase
 	end
 
 endmodule
