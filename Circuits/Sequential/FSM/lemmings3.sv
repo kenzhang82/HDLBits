@@ -12,8 +12,13 @@ module lemmings3
   output digging
 );
 
-  parameter LEFT = 3'b000, RIGHT = 3'b001, LEFT_GROUND = 3'b010, RIGHT_GROUND = 3'b011, LEFT_DIG = 3'b100, RIGHT_DIG = 3'b101;
-
+  parameter [2:0] LEFT = 3'b000, 
+                  RIGHT = 3'b001, 
+                  LEFT_GROUND = 3'b010, 
+                  RIGHT_GROUND = 3'b011, 
+                  LEFT_DIG = 3'b100, 
+                  RIGHT_DIG = 3'b101;
+                
   reg [2:0] curr_dir, next_dir;
 
   always @(posedge clk or posedge areset) begin
@@ -30,48 +35,64 @@ module lemmings3
     case (curr_dir)
       LEFT : begin
         // Priority: fall > dig > switch direction
-        if(!ground)
+        if(!ground) begin
           next_dir = LEFT_GROUND;
-        else if(dig && ground)
+        end
+        else if(dig && ground) begin
           next_dir = LEFT_DIG;
-        else if(bump_left)
+        end
+        else if(bump_left) begin
           next_dir = RIGHT;
-        else
+        end
+        else begin
           next_dir = LEFT;
         end
+      end
       RIGHT: begin
-        if(!ground)
+        if(!ground) begin
           next_dir = RIGHT_GROUND;
-        else if(dig && ground)
+        end
+        else if(dig && ground) begin
           next_dir = RIGHT_DIG;
-        else if(bump_right)
+        end
+        else if(bump_right) begin
           next_dir = LEFT;
-        else 
+        end
+        else begin 
           next_dir = RIGHT;
+        end
       end
       LEFT_DIG: begin
-        if(!ground)
+        if(!ground) begin
           next_dir = LEFT_GROUND;
-        else
+        end
+        else begin
           next_dir = LEFT_DIG;
+        end
       end
       RIGHT_DIG: begin
-        if(!ground)
+        if(!ground) begin
           next_dir = RIGHT_GROUND;
-        else
+        end
+        else begin
           next_dir = RIGHT_DIG;
+        end
       end
       LEFT_GROUND: begin
-        if (ground)
+        if (ground) begin
           next_dir = LEFT;
-        else
+        end
+        else begin
           next_dir = LEFT_GROUND;
+        end
       end
       RIGHT_GROUND: begin
-        if (ground)
+        if (ground) begin
           next_dir = RIGHT;
-        else
+        end
+        else begin
           next_dir = RIGHT_GROUND;
+        end
       end
     endcase
   end
