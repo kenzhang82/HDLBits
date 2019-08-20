@@ -33,67 +33,12 @@ module lemmings3
 
   always @(*) begin
     case (curr_dir)
-      LEFT : begin
-        // Priority: fall > dig > switch direction
-        if(!ground) begin
-          next_dir = LEFT_GROUND;
-        end
-        else if(dig && ground) begin
-          next_dir = LEFT_DIG;
-        end
-        else if(bump_left) begin
-          next_dir = RIGHT;
-        end
-        else begin
-          next_dir = LEFT;
-        end
-      end
-      RIGHT: begin
-        if(!ground) begin
-          next_dir = RIGHT_GROUND;
-        end
-        else if(dig && ground) begin
-          next_dir = RIGHT_DIG;
-        end
-        else if(bump_right) begin
-          next_dir = LEFT;
-        end
-        else begin 
-          next_dir = RIGHT;
-        end
-      end
-      LEFT_DIG: begin
-        if(!ground) begin
-          next_dir = LEFT_GROUND;
-        end
-        else begin
-          next_dir = LEFT_DIG;
-        end
-      end
-      RIGHT_DIG: begin
-        if(!ground) begin
-          next_dir = RIGHT_GROUND;
-        end
-        else begin
-          next_dir = RIGHT_DIG;
-        end
-      end
-      LEFT_GROUND: begin
-        if (ground) begin
-          next_dir = LEFT;
-        end
-        else begin
-          next_dir = LEFT_GROUND;
-        end
-      end
-      RIGHT_GROUND: begin
-        if (ground) begin
-          next_dir = RIGHT;
-        end
-        else begin
-          next_dir = RIGHT_GROUND;
-        end
-      end
+      LEFT: next_dir = ground ? (dig ? LEFT_DIG : (bump_left ? RIGHT : LEFT)): LEFT_GROUND;
+      RIGHT: next_dir = ground ? (dig ? RIGHT_DIG : (bump_right ? LEFT : RIGHT)) : RIGHT_GROUND;
+      LEFT_GROUND: next_dir = ground ? LEFT : LEFT_GROUND;
+      RIGHT_GROUND: next_dir = ground ? RIGHT : RIGHT_GROUND;
+      LEFT_DIG: next_dir = ground ? LEFT_DIG : LEFT_GROUND;
+      RIGHT_DIG: next_dir = ground ? RIGHT_DIG : RIGHT_GROUND;
     endcase
   end
 
