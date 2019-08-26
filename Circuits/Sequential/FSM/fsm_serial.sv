@@ -6,13 +6,20 @@ module fsm_serial
 	output done
 );
 
-	parameter [1:0] IDLE = 2'b00,
-									START = 2'b01,
-						      DATA = 2'b10,
-						      STOP = 2'b11;
+	parameter [3:0] IDLE = 4'h0,
+									RX_B0 = 4'h1,
+						      RX_B1 = 4'h2,
+						      RX_B2 = 4'h3,
+                  RX_B3 = 4'h4,
+                  RX_B4 = 4'h5,
+                  RX_B5 = 4'h6,
+                  RX_B6 = 4'h7,
+                  RX_B7 = 4'h8,
+                  CHK_STOP = 4'h9,
+                  OKAY = 4'hA,
+                  ERR = 4'hB;
 
-	reg [1:0] state, next_state;
-	reg [3:0] rx_count;
+	reg [3:0] state, next_state;
 
 	// State flip-flops
 	always @(posedge clk) begin
@@ -24,30 +31,25 @@ module fsm_serial
 		end
 	end
 
-	always @(posedge clk) begin
-		if (reset) begin
-			rx_count <= 0;
-		end
-		else begin
-			if (state == DATA) begin
-				rx_count <= rx_count + 1;
-			end
-			else begin
-				rx_count <= 0;
-			end
-		end
-	end
-
 	// State transition
 	always @(*) begin
 		case (state)
-			IDLE: next_state = (in == 1'b0) ? START : IDLE;
-			START: next_state = DATA;
-			DATA: next_state = (rx_count == 7) ? STOP : DATA;
-			STOP: next_state = (in == 1'b1) ? IDLE : START;
-		endcase
+			IDLE: next_state = (in == 1'b0) ? RX_B0 : IDLE;
+      RX_B0: next_state = RX_B1;
+      RX_B1: next_state = RX_B2;
+      RX_B2: next_state = RX_B3;
+      RX_B3: next_state = RX_B4;
+      RX_B4: next_state = RX_B5;
+      RX_B5: next_state = RX_B6;
+      RX_B6: next_state = RX_B7;
+      RX_B7: next_state = CHK_STOP;
+      CHK_STOP: next_state = in ? OKAY : ERR;
+      OKAY: next_state = (in == 1'b0) ? RX_B0 : IDLE; // Next batch
+      ERR: next_state = in ? IDLE : ERR; // Wait until stop bit present
+		  default: next_state = IDLE;
+    endcase
 	end
 
-	assign done = (state == STOP);
+	assign done = (state == OKAY);
 
 endmodule
